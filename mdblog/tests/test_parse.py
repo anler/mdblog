@@ -16,7 +16,8 @@ class ExtractLinksTest(unittest.TestCase):
             </body>
         </html>
         """
-        self.assertEqual([], extract_links(template))
+        self.assertEqual({"http://url/style.css", "http://some-url/"},
+                         extract_links(template))
 
     def test_with_relative(self):
         "Tests that a list is returned with relative links found"
@@ -30,5 +31,4 @@ class ExtractLinksTest(unittest.TestCase):
             </body>
         </html>
         """
-        self.assertEqual(["/style.css", "/some-url/"], extract_links(template))
-
+        self.assertEqual({"/style.css", "/some-url/"}, extract_links(template))
