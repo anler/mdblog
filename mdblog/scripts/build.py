@@ -6,7 +6,8 @@ import os
 import glob
 import argparse
 
-from mdblog.template import compile_url_template
+from mdblog import templates_path
+from mdblog.template import compile_template, url_to_template
 from mdblog.parse import extract_links
 
 
@@ -16,7 +17,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     args = parser.parse_args(argv)
 
-    templates = {t for t in glob.glob("templates/*.html")}
+    templates = {t for t in glob.glob("%s/*.html" % templates_path)}
     for template_name in templates:
         print("Extracting template %r links" % template_name)
         with open(template_name) as t:

@@ -19,12 +19,6 @@ def main(argv=None):
 
     project_name = args.name
 
-    mktree("%s/entries" % project_name)
-    mktree("%s/snippets" % project_name)
-
-    touch("%s/templates/base.html" % project_name)
-    touch("%s/templates/index.html" % project_name)
-    touch("%s/templates/entry.html" % project_name)
-    touch("%s/templates/snippet.html" % project_name)
-    touch("%s/templates/tag.html" % project_name)
+    touch("%s/dynamic_site/base.html" % project_name)
+    touch("%s/dynamic_site/index.html" % project_name)
 
