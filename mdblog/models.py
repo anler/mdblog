@@ -1,11 +1,10 @@
 from operator import attrgetter
 
-from mdblog.query import find_entries
+from mdblog.query import find_md_templates
 from mdblog.date import build_date
 
 
-class EntryManager:
-
+class Manager:
     def __init__(self, query):
         self.query = query
 
@@ -19,11 +18,19 @@ class EntryManager:
         return sorted(entries, key=attrgetter("date"), reverse=True)
 
 
-class Entry:
-    objects = EntryManager(query=find_entries)
-
+class Base:
     def __init__(self, **attrs):
         for attr in attrs:
             if attr == "date":
                 attrs[attr] = build_date(attrs[attr], "%Y-%m-%d")
             setattr(self, attr, attrs[attr])
+
+
+class Entry(Base):
+    objects = Manager(query=find_md_templates("*.entry"))
+
+
+class Snippet(Base):
+    objects = Manager(query=find_md_templates("*.snippet"))
+
+

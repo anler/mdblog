@@ -12,21 +12,22 @@ from mdblog.scripts.utils import touch
 def get_env():
     "Initalizes the environment"
     if not hasattr(get_env, "env"):
-        from mdblog.models import Entry
+        from mdblog.models import Entry, Snippet
         from mdblog import templates_path
-        env = environment(loader=filesystemloader(templates_path))
-        env.globals["entry"] = Entry
+        env = Environment(loader=FileSystemLoader(templates_path))
+        env.globals["Entry"] = Entry
+        env.globals["Snippet"] = Snippet
         env.globals["current_date"] = lambda: datetime.datetime.now()
         get_env.env = env
 
     return get_env.env
 
 
-def render_template(path):
+def render_template(path, context):
     """Render a template"""
     template = get_env().get_template(path)
 
-    return template.render()
+    return template.render(context)
 
 
 def url_to_template(url):
@@ -44,22 +45,14 @@ def url_to_template(url):
     return path
 
 
-def compile_template(template_name, compile_dir="public"):
-    """It takes an url, finds its equivalent template (if exists), render that
-    template and then, the rendered content is compiled into a plain text file
+def compile_template(template_name, output, context={}):
+    """It takes a tempate name, renders that template and the rendered content
+    is compiled into a plain text file inside output
     """
     try:
-        content = render_template(template_name)
-        path, ext = os.path.splitext(template_name)
-        if ext == ".html" and "index" not in path:
-            # Transform {page}.html into /{page}/index.html to allow pretty
-            # urls
-            path = path + "/index.html"
-        else:
-            path = path + ext
-        compile_path = os.path.normpath("%s/%s" % (compile_dir, path))
-        touch(compile_path)
-        with open(compile_path, "w") as f:
+        content = render_template(template_name, context)
+        touch(output)
+        with open(output, "w") as f:
             f.write(content)
     except TemplateNotFound:
         pass
@@ -68,7 +61,7 @@ def compile_template(template_name, compile_dir="public"):
 def parse_entry(string):
     "Compiles an entry string into an entry object"
     headers = {}
-    raw_headers, body = string.split("\n\n\n")
+    raw_headers, body = string.split("\n\n\n", 1)
     for header in raw_headers.split("\n"):
         if header:
             name, value = header.split(": ")

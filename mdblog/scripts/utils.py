@@ -1,7 +1,17 @@
 import os
 import re
 import argparse
+import fnmatch
 
+
+def find_files(start_dir, pattern):
+    "Recursively find files matching pattern"
+    files = []
+    for root, dirnames, filenames in os.walk(start_dir):
+        for filename in fnmatch.filter(filenames, pattern):
+            files.append(os.path.join(root, filename))
+
+    return files
 
 def is_dir(path):
     "Checks if path is a valid directory"

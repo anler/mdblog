@@ -1,7 +1,7 @@
 import datetime
 import unittest
 
-from mdblog.models import Entry, EntryManager
+from mdblog.models import Entry, Manager
 
 
 class EntryTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class EntryTest(unittest.TestCase):
         self.assertEqual(attrs["body"], entry.body)
 
 
-class EntryManagerTest(unittest.TestCase):
+class ManagerTest(unittest.TestCase):
     def setUp(self):
         entries = [
             dict(title="Entry 1", date="2010-2-1"),
@@ -34,13 +34,13 @@ class EntryManagerTest(unittest.TestCase):
 
     def test_latest_entry(self):
         "Test that latest() returns the more recent entry"
-        latest, = EntryManager(query=self.query).latest()
+        latest, = Manager(query=self.query).latest()
 
         self.assertEqual("Entry 2", latest.title)
 
     def test_latest(self):
         "Test that latest(n) returns the n more recent entries"
-        latest = EntryManager(query=self.query).latest(3)
+        latest = Manager(query=self.query).latest(3)
 
         self.assertEqual("Entry 2", latest[0].title)
         self.assertEqual("Entry 1", latest[1].title)
@@ -48,5 +48,5 @@ class EntryManagerTest(unittest.TestCase):
 
     def test_all(self):
         "Test that latest() returns all the entries ordered by date"
-        self.assertEqual(3, len(EntryManager(query=self.query).all()))
+        self.assertEqual(3, len(Manager(query=self.query).all()))
 

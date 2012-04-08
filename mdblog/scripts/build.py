@@ -6,7 +6,8 @@ import os
 import glob
 import argparse
 
-from mdblog import templates_path
+from mdblog import templates_path, compile_dir
+from mdblog.models import Entry, Snippet
 from mdblog.template import compile_template, url_to_template
 from mdblog.parse import extract_links
 
@@ -26,8 +27,21 @@ def main(argv=None):
             print("%i links found" % len(links))
             for url in links:
                 template_name = url_to_template(url)
-                compile_template(template_name)
+                path, ext = os.path.splitext(template_name)
+                if ext == ".html":
+                    # Transform path/to/page.html into path/to/page/index.html
+                    path = path + "/index.html"
+                else:
+                    path += ext
+                output = compile_dir + path
+                compile_template(template_name, output)
         else:
             print("No links found")
-    # Compile index.html manually
-    compile_template("index.html")
+    output = compile_dir + "/index.html"
+    compile_template("index.html", output)
+    for entry in Entry.objects.all():
+        output = compile_dir + entry.slug + "index.html"
+        compile_template("entry.html", output, context={"entry": entry})
+    for snippet in Snippet.objects.all():
+        output = compile_dir + snippet.slug + "index.html"
+        compile_template("snippet.html", output, context={"snippet": snippet})
