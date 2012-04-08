@@ -21,7 +21,6 @@ dependencies = [
 scripts = {
     "console_scripts": [
         "mdblog-init = mdblog.scripts.init:main",
-        "mdblog-serve = mdblog.scripts.serve:main",
         "mdblog-build = mdblog.scripts.build:main"
     ]
 }
