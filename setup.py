@@ -14,7 +14,6 @@ except IOError:
 
 dependencies = [
     "distribute",
-    "Pygments >= 1.5",
     "Markdown >= 2.1.1",
     "Jinja2 >= 2.6"
 ]
