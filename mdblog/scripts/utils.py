@@ -2,6 +2,24 @@ import os
 import re
 import argparse
 import fnmatch
+from functools import wraps
+
+
+HOST_PORT_REGEXP = re.compile(r"^((\w+):)?(\d{4})$")
+
+
+def memoize(f):
+    "Cache the return value of a function"
+    key = "_func_cache"
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if hasattr(f, key):
+            result = getattr(f, key)
+        else:
+            result = f(*args, **kwargs)
+            setattr(f, key, result)
+        return result
+    return wrapper
 
 
 def find_files(start_dir, pattern):
@@ -34,6 +52,21 @@ def valid_name(name):
         raise argparse.ArgumentTypeError(msg)
 
     return name
+
+
+def valid_address(address):
+    "Checks if the given string is valid port or host:port pair"
+    if not HOST_PORT_REGEXP.match(address):
+        msg = "%r is not valid port or host:port pair"
+        raise argparse.ArgumentTypeError(msg)
+    return address
+
+
+def parse_address(address):
+    "Parse a port or host:port address string and returns the tuple host, port"
+    match = HOST_PORT_REGEXP.match(address)
+    if match:
+        return match.group(2) or "", int(match.group(3))
 
 
 def mktree(path):

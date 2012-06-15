@@ -1,5 +1,6 @@
 """
-Render templates and build the blog
+Render all templates stored in `dynamic_site` directory and compiles the result
+as html files in `public` directory.
 """
 import sys
 import os
@@ -45,3 +46,7 @@ def main(argv=None):
     for snippet in Snippet.objects.all():
         output = compile_dir + snippet.slug + "index.html"
         compile_template("snippet.html", output, context={"snippet": snippet})
+
+
+if __name__ == "__main__":
+    main()

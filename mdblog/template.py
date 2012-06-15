@@ -6,21 +6,23 @@ import urllib.parse
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 import markdown
 
-from mdblog.scripts.utils import touch
+from mdblog.date import rfc3339
+from mdblog.scripts.utils import touch, memoize
 
 
+@memoize
 def get_env():
     "Initalizes the environment"
-    if not hasattr(get_env, "env"):
-        from mdblog.models import Entry, Snippet
-        from mdblog import templates_path
-        env = Environment(loader=FileSystemLoader(templates_path))
-        env.globals["Entry"] = Entry
-        env.globals["Snippet"] = Snippet
-        env.globals["current_date"] = lambda: datetime.datetime.now()
-        get_env.env = env
+    from mdblog.models import Entry, Snippet
+    from mdblog import templates_path
 
-    return get_env.env
+    env = Environment(loader=FileSystemLoader(templates_path))
+    env.globals["Entry"] = Entry
+    env.globals["Snippet"] = Snippet
+    env.globals["current_date"] = datetime.datetime.utcnow
+    env.globals["rfc3339"] = rfc3339
+
+    return env
 
 
 def render_template(path, context):

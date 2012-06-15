@@ -76,3 +76,29 @@ class MakeTreeTest(unittest.TestCase):
         self.assertTrue(os.path.isfile("a/b/c"))
 
 
+class ValidAddressTest(unittest.TestCase):
+    def test_valid_port(self):
+        addr = "3000"
+        self.assertEqual(addr, utils.valid_address(addr))
+
+    def test_valid_host_port(self):
+        addr = "localhost:3000"
+        self.assertEqual(addr, utils.valid_address(addr))
+
+    def test_invalid_address(self):
+        addr = "localhost"
+        self.assertRaises(argparse.ArgumentTypeError, utils.valid_address,
+                          addr)
+
+
+class ParseAddressTest(unittest.TestCase):
+    def test_port(self):
+        addr = "3000"
+        expected = ("", 3000)
+        self.assertEqual(expected, utils.parse_address(addr))
+
+    def test_host_port(self):
+        addr = "localhost:3000"
+        expected = ("localhost", 3000)
+        self.assertEqual(expected, utils.parse_address(addr))
+
