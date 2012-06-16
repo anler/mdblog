@@ -39,7 +39,7 @@ def watch(directory, channel):
         if mtimes < last_mtimes:
             os.write(channel, b"reload\n")
             mtimes = last_mtimes
-        time.sleep(1)
+        time.sleep(3)
 
 
 def main(argv=None):
