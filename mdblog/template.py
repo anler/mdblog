@@ -74,6 +74,6 @@ def parse_entry(string):
 
 def render_entry(body):
     "Renders the entry body"
-    return markdown.markdown(body)
+    return markdown.markdown(body, ["codehilite"])
 
 
