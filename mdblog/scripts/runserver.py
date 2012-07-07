@@ -6,6 +6,7 @@ import sys
 import os
 import re
 import time
+import multiprocessing
 import signal
 import argparse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -73,6 +74,13 @@ def main(argv=None):
         os.close(ch_read)
         watch(root, channel=ch_write)
         os._exit(0)
+
+    def kill_children(signum, frame):
+        os.kill(http_child, signal.SIGTERM)
+        os.kill(watch_child, signal.SIGTERM)
+        print("Exiting...")
+        sys.exit()
+    signal.signal(signal.SIGINT, kill_children)
 
     os.close(ch_write)
     channel = os.fdopen(ch_read)
